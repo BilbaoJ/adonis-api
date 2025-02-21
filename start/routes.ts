@@ -6,11 +6,10 @@
 | The routes file is used for defining the HTTP routes.
 |
 */
-
-const LoginController = () => import('#controllers/auth/login_controller')
 const AuthController = () => import('#controllers/auth_controller')
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+const NotesController = () => import('#controllers/notes_controller')
 
 router.get('/', async () => {
   return {
@@ -28,3 +27,5 @@ router
     router.get('/me', [AuthController, 'me']).as('auth.me')
   })
   .prefix('/auth')
+
+router.get('/notes', [NotesController, 'index']).as('notes.index')
