@@ -89,5 +89,23 @@ export default class NotesController {
   /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) {}
+  async destroy({ params, response, auth }: HttpContext) {
+    try {
+      const userId = auth.user!.id
+      const note = await Note.query().where('id', params.id).andWhere('user_id', userId).first()
+      if (!note) {
+        return response.status(404).send({
+          message: 'Note not found',
+        })
+      }
+      await note.delete()
+      return response.status(200).send({
+        message: 'Note deleted correctly',
+      })
+    } catch (error) {
+      return response.status(500).send({
+        message: 'Something went wrong',
+      })
+    }
+  }
 }

@@ -34,6 +34,7 @@ router
     router.get('/:id', [NotesController, 'show']).as('notes.show')
     router.post('/', [NotesController, 'store']).as('notes.store')
     router.put('/:id', [NotesController, 'update']).as('notes.update')
+    router.delete('/:id', [NotesController, 'destroy']).as('notes.destroy')
   })
   .prefix('/notes')
   .use(middleware.auth())
