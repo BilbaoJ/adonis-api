@@ -13,7 +13,37 @@ export default class HttpExceptionHandler extends ExceptionHandler {
    * response to the client
    */
   async handle(error: unknown, ctx: HttpContext) {
-    return super.handle(error, ctx)
+    switch ((error as any).name) {
+      case 'E_ROW_NOT_FOUND':
+        return ctx.response.status(404).json({
+          status: 'error',
+          message: 'Resource not found',
+        })
+
+      case 'E_VALIDATION_FAILURE':
+        return ctx.response.status(422).json({
+          status: 'error',
+          message: 'Validation failed',
+          errors: (error as any).messages,
+        })
+
+      case 'E_UNAUTHORIZED_ACCESS':
+      case 'E_INVALID_AUTH_UID':
+      case 'E_INVALID_AUTH_PASSWORD':
+        return ctx.response.status(401).json({
+          status: 'error',
+          message: 'Unauthorized access',
+        })
+
+      case 'E_FORBIDDEN_ACCESS':
+        return ctx.response.status(403).json({
+          status: 'error',
+          message: 'You do not have permission to access this resource',
+        })
+
+      default:
+        return super.handle(error, ctx)
+    }
   }
 
   /**
