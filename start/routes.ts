@@ -29,4 +29,5 @@ router
   .prefix('/auth')
 
 router.get('/notes', [NotesController, 'index']).as('notes.index').use(middleware.auth())
+router.get('/notes/:id', [NotesController, 'show']).as('notes.show').use(middleware.auth())
 router.post('/notes', [NotesController, 'store']).as('notes.store').use(middleware.auth())

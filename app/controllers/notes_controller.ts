@@ -45,7 +45,25 @@ export default class NotesController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) {}
+  async show({ params, auth, response }: HttpContext) {
+    try {
+      const userId = auth.user!.id
+      const note = await Note.query().where('id', params.id).andWhere('user_id', userId).first()
+      if (!note) {
+        return response.status(404).send({
+          message: 'Note not found',
+        })
+      }
+      return response.status(200).send({
+        message: 'Note read correctly',
+        note,
+      })
+    } catch (error) {
+      return response.status(500).send({
+        message: 'Something went wrong',
+      })
+    }
+  }
 
   /**
    * Edit individual record
