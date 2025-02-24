@@ -18,11 +18,6 @@ export default class NotesController {
   }
 
   /**
-   * Display form to create a new record
-   */
-  async create({}: HttpContext) {}
-
-  /**
    * Handle form submission for the create action
    */
   async store({ request, response, auth }: HttpContext) {
@@ -32,7 +27,7 @@ export default class NotesController {
       const userId = user.id
       const note = await Note.create({ userId, ...data })
       return response.status(201).send({
-        message: 'Notes created correctly',
+        message: 'Note created correctly',
         note,
       })
     } catch (error) {
@@ -66,14 +61,30 @@ export default class NotesController {
   }
 
   /**
-   * Edit individual record
-   */
-  async edit({ params }: HttpContext) {}
-
-  /**
    * Handle form submission for the edit action
    */
-  async update({ params, request }: HttpContext) {}
+  async update({ params, request, response, auth }: HttpContext) {
+    try {
+      const userId = auth.user!.id
+      const note = await Note.query().where('id', params.id).andWhere('user_id', userId).first()
+      if (!note) {
+        return response.status(404).send({
+          message: 'Note not found',
+        })
+      }
+      const data = await request.validateUsing(noteValidator)
+      note.merge(data)
+      await note.save()
+      return response.status(200).send({
+        message: 'Note updated correctly',
+        note,
+      })
+    } catch (error) {
+      return response.status(500).send({
+        message: 'Something went wrong',
+      })
+    }
+  }
 
   /**
    * Delete record

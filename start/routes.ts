@@ -28,6 +28,12 @@ router
   })
   .prefix('/auth')
 
-router.get('/notes', [NotesController, 'index']).as('notes.index').use(middleware.auth())
-router.get('/notes/:id', [NotesController, 'show']).as('notes.show').use(middleware.auth())
-router.post('/notes', [NotesController, 'store']).as('notes.store').use(middleware.auth())
+router
+  .group(() => {
+    router.get('/', [NotesController, 'index']).as('notes.index')
+    router.get('/:id', [NotesController, 'show']).as('notes.show')
+    router.post('/', [NotesController, 'store']).as('notes.store')
+    router.put('/:id', [NotesController, 'update']).as('notes.update')
+  })
+  .prefix('/notes')
+  .use(middleware.auth())
