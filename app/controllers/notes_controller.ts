@@ -25,8 +25,14 @@ export default class NotesController {
     const userId = user.id
     const note = await Note.create({ userId, title, content })
 
-    if (tags && tags.length > 0) {
-      const tagIds = tags.map((tag) => tag!.id)
+    if (tags) {
+      const tagIds = tags.map((tag) => tag.id)
+      const isUserTags = await NoteService.verifyTags(tagIds, userId)
+      if (isUserTags) {
+        return response.status(400).send({
+          message: 'Tag/s not found',
+        })
+      }
       await note.related('tags').attach(tagIds)
     }
     await note.load('tags')
@@ -61,6 +67,12 @@ export default class NotesController {
     await note.save()
     if (data.tags) {
       const tagIds = data.tags.map((tag) => tag.id)
+      const isUserTags = await NoteService.verifyTags(tagIds, userId)
+      if (isUserTags) {
+        return response.status(400).send({
+          message: 'Tag/s not found',
+        })
+      }
       await note.related('tags').sync(tagIds)
     } else {
       await note.related('tags').detach()
