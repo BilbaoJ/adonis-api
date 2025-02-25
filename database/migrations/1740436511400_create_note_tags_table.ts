@@ -8,8 +8,6 @@ export default class extends BaseSchema {
       table.increments('id')
       table.integer('note_id').unsigned().references('notes.id').onDelete('CASCADE')
       table.integer('tag_id').unsigned().references('tags.id').onDelete('CASCADE')
-      table.timestamp('created_at')
-      table.timestamp('updated_at')
     })
   }
 

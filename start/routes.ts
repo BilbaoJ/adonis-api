@@ -9,6 +9,7 @@
 const AuthController = () => import('#controllers/auth_controller')
 import router from '@adonisjs/core/services/router'
 import { middleware } from './kernel.js'
+const TagsController = () => import('#controllers/tags_controller')
 const NotesController = () => import('#controllers/notes_controller')
 
 router.get('/', async () => {
@@ -38,3 +39,5 @@ router
   })
   .prefix('/notes')
   .use(middleware.auth())
+
+router.post('/tags', [TagsController, 'store']).as('tags.store').use(middleware.auth())
