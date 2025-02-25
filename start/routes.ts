@@ -41,3 +41,5 @@ router
   .use(middleware.auth())
 
 router.post('/tags', [TagsController, 'store']).as('tags.store').use(middleware.auth())
+router.get('/tags', [TagsController, 'userTags']).as('tags.index').use(middleware.auth())
+router.delete('/tags/:id', [TagsController, 'destroy']).as('tags.destroy').use(middleware.auth())

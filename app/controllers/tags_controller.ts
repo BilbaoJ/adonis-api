@@ -13,12 +13,26 @@ export default class TagsController {
     })
   }
 
-  async UserTags({ auth, response }: HttpContext) {
+  async userTags({ auth, response }: HttpContext) {
     const userId = auth.user!.id
     const tags = await Tag.query().where('user_id', userId)
     return response.status(200).send({
       message: 'Tags read correctly',
       tags,
+    })
+  }
+
+  async destroy({ auth, response, params }: HttpContext) {
+    const userId = auth.user!.id
+    const tag = await Tag.query().where('user_id', userId).andWhere('id', params.id).first()
+    if (!tag) {
+      return response.status(403).send({
+        message: 'You are not able to do this action',
+      })
+    }
+    await tag.delete()
+    return response.status(200).send({
+      message: 'Tag deleted correctly',
     })
   }
 }
